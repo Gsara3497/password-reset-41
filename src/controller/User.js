@@ -55,29 +55,24 @@ const loginEmail = async(req,res)=>{
       if(!users)
       {
         return res.status(400).send({
-            message:"User not found "
+            message:"User not found"
         })
       }
+
       const userMatch = await Auth.hashCompare(password, users.password);
       if(!userMatch)
       {
-        res.status(400).send({
+        return res.status(400).send({
             message:"Invalid Password"
         })
       }
-     
-    //   Create the payload object
-    const payload = {
-        email: users.email
-    }
-
-    // Generate the token with the payload
-      let token = await Auth.createToken(payload)
+      let token = await Auth.createToken({email:users.email})
         res.status(200).send({
             message:"Login Successfull",
             token
         })
     }
+
     catch (error) {
         res.status(500).send({
             message:"Internal Server Error",
@@ -88,6 +83,12 @@ const loginEmail = async(req,res)=>{
 
 const verifyToken = async(req,res)=>{
   try {
+    if(!req.users){
+        return res.status(400).send({
+            message:"users not Authorized"
+        })
+    }
+    
     res.status(200).send({
         message: `Welcome ${req.users.email}! is Protected`
     })
@@ -162,6 +163,11 @@ const getResetPassword = async(req,res)=>{
     }
 
     const hashpswd = await Auth.hashedPassword(req.body.password)
+    if(!hashpswd){
+        return res.status(500).send({
+            message:"Password hashing error"
+        })
+    }
     users.password = hashpswd;
     users.resetPasswordToken = null;
     users.resetPasswordExpires = null;

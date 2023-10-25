@@ -32,35 +32,6 @@ const decodeToken = async (token) => {
     }
 }
 
-// const decodeToken = async(token)=>{
-//     const payload = await jwt.decode(token)
-//     return payload
-// }
-
-// const validate = async(req,res,next)=>{
-//     let token = req.headers.authorization?.split(" ")[1]
-//     if(token)
-//     {
-//         let payload = await decodeToken(token)
-//         let currentTime = (+new Date())/1000
-
-//         if(currentTime<payload.exp)
-//             next()
-        
-//         else
-//             res.status(400).send({
-//                 message:"Token Expired"
-//             })
-//     }
-//     else
-//     {
-//         res.status(400).send({
-//             message:"No Token Found"
-//         })
-//     }
-
-// }
-
 const validate = async(req,res,next)=>{
     let authHeader = req.headers.authorization;
 
@@ -78,17 +49,8 @@ const validate = async(req,res,next)=>{
                 message: "Invalid Token"
             })
         }
-        const users = await userModel.findOne({_id:decodedToken.id})
-
-        if(!users){
-            return res.status(400).send({
-                message:"User not found"
-            })
-        }
-        console.log("Decoded Token:", decodedToken);
-        console.log("User ID:", decodedToken.id);
         
-        req.users = users;
+        req.users = decodedToken;
         next()
     })
 }
