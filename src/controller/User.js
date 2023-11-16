@@ -114,7 +114,7 @@ const resetPassword = async(req,res)=>{
     // create random numder, length is six
       const token = Math.random().toString(36).slice(-8); // set password as 8 character
       users.resetPasswordToken = token;
-      users.resetPasswrodExpires = Date.now() + 3600000; // Expires time set for an hour
+      users.resetPasswordExpires = Date.now() + 3600000; // Expires time set for an hour
 
       await users.save();
 
