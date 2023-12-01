@@ -1,13 +1,8 @@
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import dotenv from 'dotenv'
-import userModel from '../models/User.js'
 
-dotenv.config()
-
-const hashedPassword = async(password)=>{
+const hashPassword = async(password)=>{
     let salt = await bcrypt.genSalt(Number(process.env.SALT_ROUNDS))
-    console.log(salt)
     let hash = await bcrypt.hash(password,salt)
     return hash
 }
@@ -17,19 +12,15 @@ const hashCompare = async(password,hash)=>{
 }
 
 const createToken = async(payload)=>{
-   const token = jwt.sign(payload,process.env.JWT_SECRET,{
-    expiresIn:process.env.JWT_EXPIRE
-   }) 
-   return token
+    const token = await jwt.sign(payload, process.env.JWT_SECRET,{
+        expiresIn:process.env.JWT_EXPIRE
+    })
+    return token
 }
 
-const decodeToken = async (token) => {
-    try {
-        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-        return decodedToken;
-    } catch (error) {
-        return null; // Handle invalid or expired tokens
-    }
+const decodeToken = async(token)=>{
+    let payload = await jwt.decode(token)
+    return payload
 }
 
 const validate = async(req,res,next)=>{
@@ -56,7 +47,7 @@ const validate = async(req,res,next)=>{
 }
 
 export default {
-    hashedPassword,
+    hashPassword,
     hashCompare,
     createToken,
     decodeToken,

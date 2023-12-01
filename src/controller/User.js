@@ -18,65 +18,64 @@ try {
 }
 }
 
-const postEmail = async(req,res)=>{
-try {
-    const { email, password } = req.body;
-
-    const users = await userModel.findOne({email})
-
-    if(!users){
-        const hashPassword = await Auth.hashedPassword(req.body.password)
-
-        const newUser = new userModel({email, password:hashPassword})
-
-        await newUser.save();
-
-        return res.status(201).send({
-            message:"Users created Successfully"
+const postEmail = async(req,res) => {
+    try {
+        let user = await userModel.findOne({email:req.body.email})
+        if(!user){
+            req.body.password = await Auth.hashPassword(req.body.password)
+            await userModel.create(req.body)
+            res.status(201).send({
+                message:"User Created Successfully"
+            })
+        }
+        else{
+            res.status(400).send({
+                message:`User with ${req.body.email} already exits`
+})
+        }
+    } catch (error) {
+        res.status(500).send({
+            message:"Internal Server Error",
+            error:error.message
         })
-
     }
-    res.status(400).send({
-        message:"Email Already Exists"
-    })
-} catch (error) {
-    res.status(500).send({
-        message:"Internal Server Error",
-        error:error.message
-    })
-}
 }
 
 const loginEmail = async(req,res)=>{
     try {
-      const { email, password } = req.body;
-      
-      const users = await userModel.findOne({ email })
-      if(!users)
-      {
-        return res.status(400).send({
-            message:"User not found"
-        })
-      }
+        let user = await userModel.findOne({email:req.body.email})
 
-      const userMatch = await Auth.hashCompare(password, users.password);
-      if(!userMatch)
-      {
-        return res.status(400).send({
-            message:"Invalid Password"
-        })
-      }
-      let token = await Auth.createToken({email:users.email})
-        res.status(200).send({
-            message:"Login Successfull",
-            token
-        })
-    }
-
-    catch (error) {
+        if(user){
+            let hashCompare = await Auth.hashCompare(req.body.password, user.password)
+            if(hashCompare){
+                let token = await Auth.createToken({
+                    id:user._id,
+                    name:user.name,
+                    email:user.email,
+                })
+                let userData = await userModel.findOne({email:req.body.email},{_id:0,password:0,email:0})
+                res.status(200).send({
+                    message:"Login Successfully",
+                    token,
+                    userData
+                })
+            }
+            else{
+                res.status(400).send({
+                    message:"Invalid Password"
+                })
+            }
+        }
+        else
+        {
+            res.status(400).send({
+                message:`Account with ${req.body.email} doesn't exists!`
+            })
+        }
+    } catch (error) {
         res.status(500).send({
             message:"Internal Server Error",
-            error:error.message
+            error:error.data.message
         })
     }
 }
@@ -162,7 +161,7 @@ const getResetPassword = async(req,res)=>{
         })
     }
 
-    const hashpswd = await Auth.hashedPassword(req.body.password)
+    const hashpswd = await Auth.hashPassword(req.body.password)
     if(!hashpswd){
         return res.status(500).send({
             message:"Password hashing error"
