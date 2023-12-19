@@ -1,7 +1,6 @@
 import userModel from '../models/User.js'
 import Auth from '../common/auth.js'
 import nodemailer from 'nodemailer'
-import auth from '../common/auth.js'
 
 const getEmail = async(req,res)=>{
 try {
@@ -103,7 +102,7 @@ const verifyToken = async(req,res)=>{
 const resetPassword = async(req,res)=>{
       const { email } = req.body;
 
-      const users = await userModel.findOne({email})
+      const users = await userModel.findOne({email:email})
 
       if(!users){
         return res.status(400).send({
@@ -130,7 +129,6 @@ const resetPassword = async(req,res)=>{
         from : "sumaiyanisu29@gmail.com",
         to : users.email,
         subject : "Password Reset Request",
-        // text : `You are receiving this email because you has requested a password reset for your account. \n\n Please use the following token to reset your password: ${token}\n\n If you didn't request a password reset, please ignore this Email.`
         text: `https://luminous-dolphin-1bd766.netlify.app/forgotpassword/${users._id}/${token}`
       }
 
@@ -149,26 +147,15 @@ const resetPassword = async(req,res)=>{
 
 const getResetPassword = async(req,res)=>{
     try{
-    const { token } = req.params;
+    const { id, token } = req.params;
     // console.log('Received Token:', token);
-    // const { password } = req.body;
-
-    if(users.length === 1){
-        let token = await Auth.createToken(users[0])
-        let url = ``
-    }
-    else{
-         return res.status(400).send({
-            message:"Invalid Token",
-            
-        })
-    }
 
     const users = await userModel.findOne({
         resetPasswordToken : token,
         resetPasswordExpires : { $gt: Date.now() },
     })
     
+
     const hashpswd = await Auth.hashPassword(req.body.password)
     if(!hashpswd){
         return res.status(500).send({
