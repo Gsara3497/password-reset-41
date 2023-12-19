@@ -155,8 +155,8 @@ const getResetPassword = async(req,res)=>{
         resetPasswordExpires : { $gt: Date.now() },
     })
     
-
-    const hashpswd = await Auth.hashPassword(req.body.password)
+    const newPassword = req.body.password;
+    const hashpswd = await Auth.hashPassword(newPassword);
     if(!hashpswd){
         return res.status(500).send({
             message:"Password hashing error"
