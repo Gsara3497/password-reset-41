@@ -175,7 +175,8 @@ const getResetPassword = async(req,res)=>{
 catch(error){
     console.error('Error:', error);
     res.status(500).send({
-      message: "Internal Server Error"
+      message: "Internal Server Error",
+      error:error.message,
     });
 }
 
