@@ -121,8 +121,8 @@ const resetPassword = async(req,res)=>{
       const transporter = nodemailer.createTransport({
         service : "gmail",
         auth:{
-            user: process.env.UserMailId,
-            pass: process.env.MailPswd,
+            user:"sumaiyanisu29@gmail.com",
+            pass:"dvxk nmpy fztw ffty" // app password from the account
         }
       })
 
@@ -133,28 +133,29 @@ const resetPassword = async(req,res)=>{
         text: `https://luminous-dolphin-1bd766.netlify.app/forgotpassword/${users._id}/${token}`
       }
 
-       transporter.sendMail(message,(err, info)=>{
+      transporter.sendMail(message,(err, info)=>{
         if(err){
             res.status(400).send({
                 message:"Something went Wrong, Try Again!"
             })
-        } else{
+        }
             res.status(200).send({
                 message:"Password Reset Email Sent" + info.response
             });
-        }
+        
       })
     }catch(error){
         res.status(500).send({
             message:"Internal Server Error",
-            error:error.message,
+            error: error.message,
         })
     }
 }
 
 const getResetPassword = async(req,res)=>{
     try{
-    const { password } = req.body
+    const { id, token } = req.params;
+    console.log('Received Token:', token);
 
     const users = await userModel.findOne({
         resetPasswordToken : token,
@@ -168,7 +169,8 @@ const getResetPassword = async(req,res)=>{
         });
       }
     
-    const hashpswd = await Auth.hashPassword(password);
+    const newPassword = req.body.password;
+    const hashpswd = await Auth.hashPassword(newPassword);
     if(!hashpswd){
         return res.status(500).send({
             message:"Password hashing error"
