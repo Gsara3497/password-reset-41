@@ -7,7 +7,7 @@ const validateEmail = (e)=>{
 const userSchema = new mongoose.Schema({
     email : {type:String, validate:validateEmail},
     password : {type:String},
-    resetPasswordToken : {type:String},
+    resetPasswordOtp : {type:String},
     resetPasswordExpires : {type:Date}
 },
 {

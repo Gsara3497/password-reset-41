@@ -7,7 +7,7 @@ try {
 
     mongoose.connect(`${process.env.dbUrl}/${process.env.dbName}`)
     
-    console.log("Database connected successfully!")
+    // console.log("Database connected successfully!")
 } catch (error) {
     console.log(error)
 }

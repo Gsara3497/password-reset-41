@@ -9,6 +9,6 @@ router.post('/signup',UserController.postEmail)
 router.post('/login',UserController.loginEmail)
 router.get('/data',Auth.validate,UserController.verifyToken)
 router.post('/reset-password',UserController.resetPassword)
-router.post('/getreset-password/:id/:token',UserController.getResetPassword)
+router.post('/getreset-password/:OTP/:password',UserController.getResetPassword)
 
 export default router
