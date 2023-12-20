@@ -102,6 +102,7 @@ const verifyToken = async(req,res)=>{
 const resetPassword = async(req,res)=>{
       const { email } = req.body;
 
+      try{
       const users = await userModel.findOne({email:email})
 
       if(!users){
@@ -120,8 +121,8 @@ const resetPassword = async(req,res)=>{
       const transporter = nodemailer.createTransport({
         service : "gmail",
         auth:{
-            user:"sumaiyanisu29@gmail.com",
-            pass:"dvxk nmpy fztw ffty" // app password from the account
+            user: process.env.UserMailId,
+            pass: process.env.MailPswd,
         }
       })
 
@@ -132,31 +133,42 @@ const resetPassword = async(req,res)=>{
         text: `https://luminous-dolphin-1bd766.netlify.app/forgotpassword/${users._id}/${token}`
       }
 
-      transporter.sendMail(message,(err, info)=>{
+       transporter.sendMail(message,(err, info)=>{
         if(err){
             res.status(400).send({
                 message:"Something went Wrong, Try Again!"
             })
-        }
+        } else{
             res.status(200).send({
                 message:"Password Reset Email Sent" + info.response
             });
-        
+        }
       })
+    }catch(error){
+        res.status(500).send({
+            message:"Internal Server Error",
+            error:error.message,
+        })
+    }
 }
 
 const getResetPassword = async(req,res)=>{
     try{
-    const { id, token } = req.params;
-    // console.log('Received Token:', token);
+    const { password } = req.body
 
     const users = await userModel.findOne({
         resetPasswordToken : token,
         resetPasswordExpires : { $gt: Date.now() },
     })
+
+    // Check if the user was found
+    if (!users) {
+        return res.status(400).send({
+          message: "User not found or the token has expired.",
+        });
+      }
     
-    const newPassword = req.body.password;
-    const hashpswd = await Auth.hashPassword(newPassword);
+    const hashpswd = await Auth.hashPassword(password);
     if(!hashpswd){
         return res.status(500).send({
             message:"Password hashing error"
@@ -171,6 +183,7 @@ const getResetPassword = async(req,res)=>{
     res.status(200).send({
         message:"Password Reset Successfully"
     })
+    console.log('Received Params:',req.params)
 }
 catch(error){
     console.error('Error:', error);

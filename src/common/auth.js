@@ -4,23 +4,23 @@ import jwt from 'jsonwebtoken'
 const hashPassword = async(password)=>{
     let salt = await bcrypt.genSalt(Number(process.env.SALT_ROUNDS))
     let hash = await bcrypt.hash(password,salt)
-    return hash
+    return hash;
 }
 
 const hashCompare = async(password,hash)=>{
-    return await bcrypt.compare(password,hash)
+    return await bcrypt.compare(password,hash);
 }
 
 const createToken = async(payload)=>{
     const token = await jwt.sign(payload, process.env.JWT_SECRET,{
-        expiresIn:process.env.JWT_EXPIRE
+        expiresIn:process.env.JWT_EXPIRE,
     })
-    return token
+    return token;
 }
 
 const decodeToken = async(token)=>{
     let payload = await jwt.decode(token)
-    return payload
+    return payload;
 }
 
 const validate = async(req,res,next)=>{
