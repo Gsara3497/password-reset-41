@@ -102,7 +102,6 @@ const verifyToken = async(req,res)=>{
 const resetPassword = async(req,res)=>{
       const { email } = req.body;
 
-      try{
       const users = await userModel.findOne({email:email})
 
       if(!users){
@@ -144,12 +143,6 @@ const resetPassword = async(req,res)=>{
             });
         
       })
-    }catch(error){
-        res.status(500).send({
-            message:"Internal Server Error",
-            error: error.message,
-        })
-    }
 }
 
 const getResetPassword = async(req,res)=>{
