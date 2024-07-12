@@ -1,18 +1,23 @@
-Password Reset Flow Back end
+# Day 41 Task in Nodejs- Day -5: Authentication
 
-Through this system we can able to reset our password.
+# Password Reset Flow
 
-Get Email : https://password-reset-flow-backend-un21.onrender.com/user
+## Procedure:-
 
-Post Email : https://password-reset-flow-backend-un21.onrender.com/user
+step1: Open file manager then select project name [password-reset-flow-backend] tpye cmd then open command prompt type (code .) then create vs code.
 
-Login : https://password-reset-flow-backend-un21.onrender.com/user/login
+step2: - Create an empty directory
 
-New Reset Password Mail : https://password-reset-flow-backend-un21.onrender.com/user/reset-password
+Generate a package.json file by running npm init -y or npm init
 
-Reset Password : https://password-reset-flow-backend-un21.onrender.com/user/resrt-password/:token
+Install the required dependencies:
 
-Validate Token : https://password-reset-flow-backend-un21.onrender.com/user/data
+npm install express
 
+Create an entry point file (index.js) in the root directory
 
-postman : https://dark-flare-329680.postman.co/workspace/Password-Reset-Flow~d2563327-861e-4e33-8342-911c9a0dacd8/collection/27772271-a0efe3c2-11c1-4fa2-b8c8-2ee68ddc779b?action=share&creator=27772271
+step3: vs code -> to create .gitignore file and index.js, common, controller, models, routes, .env file and README.md file for the task
+
+step4: Then i use [postman] App -> Add collection -> then create [ password-reset ] -> Then Add Request for get my result.
+
+step5: Then deployed for github and Render.com and netlify.comm
